@@ -1,0 +1,3 @@
+
+class CityCimException(Exception):
+    pass
