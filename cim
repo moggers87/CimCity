@@ -31,11 +31,37 @@ def dead(people):
     return len([p for p in people if p.dead])
 
 def display(msg):
-    def clear():
-        print " "*80  + " \r",
-
     print " %s\r" % msg + "",
     sys.stdout.flush()
+
+class GayOnExit(object):
+    """Gay context manager"""
+
+    def __init__(self, people):
+        """Takes list of people"""
+        self.people = people
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if exc_type is KeyboardInterrupt:
+            print "\r",
+            display("Alive: %s | Dead: %s | ticks %s\n" % (alive(self.people), dead(self.people), ticks))
+
+            couples = 0
+            for i in self.people:
+                if i.partner is not None and i.gender == i.partner.gender:
+                    couples = couples + 1
+
+            # assume monogamy
+            couples = couples / 2
+            popn = len(self.people)
+
+            ratio = 100 * float(couples) / float(popn)
+            print " Percentage of same gender couples: %f" % ratio
+            return True
+        return exc_type is None
 
 if __name__ == "__main__":
     if "-v" in sys.argv[1:] or "--version" in sys.argv[1:]:
@@ -52,23 +78,25 @@ if __name__ == "__main__":
     c = 0
     ticks = 0
     speed = float(60) / settings.speed
-    while True:
-        display("Alive: %s | Dead: %s | ticks %s" % (alive(people), dead(people), ticks))
-        # main game loop
-        try:
-            person = people[c]
-        except IndexError:
-            ticks += 1
-            time.sleep(speed)
-            c = 0
-            continue
 
-        c += 1
-        try:
-            np = person.on_tick(people[c])
-        except IndexError:
-            np = person.on_tick()
-        
-        if np:
-            people.append(np)
+    with GayOnExit(people):
+        while True:
+            display("Alive: %s | Dead: %s | ticks %s" % (alive(people), dead(people), ticks))
+            # main game loop
+            try:
+                person = people[c]
+            except IndexError:
+                ticks += 1
+                time.sleep(speed)
+                c = 0
+                continue
+
+            c += 1
+            try:
+                np = person.on_tick(people[c])
+            except IndexError:
+                np = person.on_tick()
+
+            if np:
+                people.append(np)
 
