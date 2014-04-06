@@ -43,13 +43,13 @@ class Person(object):
 
         self.age += 1
 
-        self.health = min(100, max(0, self.health + self.healthiness))
+        self.health = min(100, max(0, self.health + random.gauss(self.healthiness, 10)))
 
         # are they dead?
         if self.health == 0:
             return self.death()
 
-        if self.age >= settings.avarage_age:
+        if (settings.avarage_age - random.gauss(self.age, 10)) <= 0:
             return self.death()
 
         if next_person:
