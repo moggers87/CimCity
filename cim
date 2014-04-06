@@ -31,8 +31,10 @@ def alive(people):
 def dead(people):
     return len([p for p in people if p.dead])
 
-def display(msg):
-    print " %s\r" % msg + "",
+def display(people, ticks):
+    msg = "Alive: %s | Dead: %s | Homeless: %s | ticks %s\r"
+    msg = msg % (alive(people), dead(people), len(homeless), ticks)
+    sys.stdout.write(msg)
     sys.stdout.flush()
 
 class GayOnExit(object):
@@ -48,7 +50,8 @@ class GayOnExit(object):
     def __exit__(self, exc_type, exc_value, traceback):
         if exc_type is KeyboardInterrupt:
             print "\r",
-            display("Alive: %s | Dead: %s | ticks %s\n" % (alive(self.people), dead(self.people), ticks))
+            display(people, ticks)
+            print
 
             couples = 0
             for i in self.people:
@@ -60,7 +63,7 @@ class GayOnExit(object):
             popn = len(self.people)
 
             ratio = 100 * float(couples) / float(popn)
-            print " Percentage of same gender couples: %f" % ratio
+            print "Percentage of same gender couples: %f" % ratio
             return True
         return exc_type is None
 
@@ -83,7 +86,7 @@ if __name__ == "__main__":
 
     with GayOnExit(people):
         while True:
-            display("Alive: %s | Dead: %s | ticks %s" % (alive(people), dead(people), ticks))
+            display(people, ticks)
             # main game loop
             try:
                 person = people[c]
