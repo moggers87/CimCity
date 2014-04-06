@@ -27,12 +27,15 @@ class Person(object):
     gender = None
     age = 0
     health = 100
+    healthiness = 0
     partner = None
     parents = []
     dead = False
 
-    def __init__(self):
+    def __init__(self, home=None):
         self.gender = random.choice(["Male", "Female"])
+        if home is not None:
+            home.add_occupants([self])
 
     def on_tick(self, next_person=None):
         if self.dead:
@@ -40,14 +43,14 @@ class Person(object):
 
         self.age += 1
 
+        self.health = min(100, max(0, self.health + self.healthiness))
+
         # are they dead?
         if self.health == 0:
-            self.dead = True
-            return None
+            return self.death()
 
         if self.age >= settings.avarage_age:
-            self.dead = True
-            return None
+            return self.death()
 
         if next_person:
             # oh okay.
@@ -56,12 +59,10 @@ class Person(object):
                 return None
             elif self.partner and random.randint(0, 100) >= 95 and self.age >= 15 and self.age <= 50:
                 if self.partner.gender == self.gender and random.randint(0, 10000) >= 9998:
-                    print "=> Gay couple produced a child!"
+                    print "\n=> Gay couple produced a child!"
                     return self.produce_offspring()
                 else:
                     return self.produce_offspring()
-
-                return None
         
     def marry(self, person):
         self.partner = person
@@ -74,3 +75,8 @@ class Person(object):
         np = Person()
         np.parents = [self, self.partner]
         return np
+
+    def death(self):
+        self.dead = True
+        self.home.occupants.remove(self)
+        self.home = None

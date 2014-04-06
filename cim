@@ -16,10 +16,11 @@
 # along with CimCity.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-import time
 import settings
 import sys
+import time
 
+from items.house import *
 from items.person import Person
 
 version = "0.0.1"
@@ -75,6 +76,7 @@ if __name__ == "__main__":
 
     # inital people gen
     people = [Person() for i in range(int(sys.argv[1]))]
+    homeless.add_occupants(people[:])
     c = 0
     ticks = 0
     speed = float(60) / settings.speed
@@ -98,5 +100,6 @@ if __name__ == "__main__":
                 np = person.on_tick()
 
             if np:
+                homeless.add_occupants([np])
                 people.append(np)
 

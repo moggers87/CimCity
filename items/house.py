@@ -18,16 +18,20 @@ class LivingSpace(object):
     def add_occupants(self, people):
         """Move person to this house, returns people it can't fit in"""
         while True:
-            if len(self) == self.capacity:
+            if self.full():
                 return people
 
             try:
                 person = people.pop(0)
             except IndexError:
                 return people
-            person.home.remove(person)
+            if hasattr(person, "home"):
+                person.home.occupants.remove(person)
             person.home = self
             self.occupants.add(person)
+
+    def full(self):
+        return len(self) == self.capacity
 
     def recalculate_health(self):
         for occupant in self.occupants:
