@@ -17,6 +17,7 @@
 ##
 
 from __future__ import absolute_import, division, print_function, unicode_literals
+from threading import Timer
 import settings
 import sys
 import time
@@ -87,23 +88,29 @@ if __name__ == "__main__":
 
     with GayOnExit(people):
         while True:
+            timer = Timer(speed, lambda *x:x)
+            timer.start()
+
             display(people, ticks)
+
             # main game loop
-            try:
-                person = people[c]
-            except IndexError:
-                ticks += 1
-                time.sleep(speed)
-                c = 0
-                continue
+            while True:
+                try:
+                    person = people[c]
+                except IndexError:
+                    break
 
-            c += 1
-            try:
-                np = person.on_tick(people[c])
-            except IndexError:
-                np = person.on_tick()
+                c += 1
 
-            if np:
-                homeless.add_occupants([np])
-                people.append(np)
+                try:
+                    np = person.on_tick(people[c])
+                except IndexError:
+                    np = person.on_tick()
 
+                if np:
+                    homeless.add_occupants([np])
+                    people.append(np)
+
+            ticks += 1
+            c = 0
+            timer.join()
