@@ -15,6 +15,7 @@
 # along with CimCity.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
+from __future__ import absolute_import, division, print_function, unicode_literals
 import math
 import settings
 import random
@@ -59,7 +60,7 @@ class Person(object):
                 return None
             elif self.partner and random.randint(0, 100) >= 95 and self.age >= 15 and self.age <= 50:
                 if self.partner.gender == self.gender and random.randint(0, 10000) >= 9998:
-                    print "\n=> Gay couple produced a child!"
+                    print("\n=> Gay couple produced a child!")
                     return self.produce_offspring()
                 else:
                     return self.produce_offspring()

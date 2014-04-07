@@ -15,6 +15,8 @@
 # along with CimCity.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import settings
 
 __all__ = ['homeless', 'House']

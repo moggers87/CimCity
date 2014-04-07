@@ -16,6 +16,7 @@
 # along with CimCity.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
+from __future__ import absolute_import, division, print_function, unicode_literals
 import settings
 import sys
 import time
@@ -49,9 +50,9 @@ class GayOnExit(object):
 
     def __exit__(self, exc_type, exc_value, traceback):
         if exc_type is KeyboardInterrupt:
-            print "\r",
+            print("\r", end="")
             display(people, ticks)
-            print
+            print()
 
             couples = 0
             for i in self.people:
@@ -62,19 +63,19 @@ class GayOnExit(object):
             couples = couples / 2
             popn = len(self.people)
 
-            ratio = 100 * float(couples) / float(popn)
-            print "Percentage of same gender couples: %f" % ratio
+            ratio = 100 * couples / popn
+            print("Percentage of same gender couples: %f" % ratio)
             return True
         return exc_type is None
 
 if __name__ == "__main__":
     if "-v" in sys.argv[1:] or "--version" in sys.argv[1:]:
-        print "The version is: %s" % version
+        print("The version is: %s" % version)
         sys.exit()
 
     if len(sys.argv) <= 1:
-        print "You need to say how many people to start off with"
-        print "Usage:  %s <people>" % sys.argv[0]
+        print("You need to say how many people to start off with")
+        print("Usage:  %s <people>" % sys.argv[0])
         sys.exit()
 
     # inital people gen
@@ -82,7 +83,7 @@ if __name__ == "__main__":
     homeless.add_occupants(people[:])
     c = 0
     ticks = 0
-    speed = float(60) / settings.speed
+    speed = 60 / settings.speed
 
     with GayOnExit(people):
         while True:
