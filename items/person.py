@@ -73,6 +73,9 @@ class Person(object):
         if self.partner is None:
             raise Exception("Must have a pertner to give birth")
 
+        if self.health < 50:
+            return None
+
         np = Person()
         np.parents = [self, self.partner]
         return np
