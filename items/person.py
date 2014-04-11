@@ -21,11 +21,10 @@ import settings
 import random
 
 #from exceptions.generic import CityCimException
-
 class Person(object):
 
     # features
-    gender = None
+    sex = None
     age = 0
     health = 100
     healthiness = 0
@@ -34,7 +33,7 @@ class Person(object):
     dead = False
 
     def __init__(self, home=None):
-        self.gender = random.choice(["Male", "Female"])
+        self.sex = random.choice(["Male", "Female"])
         if home is not None:
             home.add_occupants([self])
 
@@ -59,12 +58,12 @@ class Person(object):
                 self.marry(next_person)
                 return None
             elif self.partner and random.randint(0, 100) >= 95 and self.age >= 15 and self.age <= 50:
-                if self.partner.gender == self.gender and random.randint(0, 10000) >= 9998:
+                if self.partner.sex == self.sex and random.randint(0, 10000) >= 9998:
                     print("\n=> Gay couple produced a child!")
                     return self.produce_offspring()
                 else:
                     return self.produce_offspring()
-        
+
     def marry(self, person):
         self.partner = person
         person.partner = self
