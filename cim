@@ -16,10 +16,13 @@
 # along with CimCity.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-import time
+from __future__ import absolute_import, division, print_function, unicode_literals
+from threading import Timer
 import settings
 import sys
+import time
 
+from items.house import *
 from items.person import Person
 
 version = "0.0.1"
@@ -30,45 +33,84 @@ def alive(people):
 def dead(people):
     return len([p for p in people if p.dead])
 
-def display(msg):
-    def clear():
-        print " "*80  + " \r",
-
-    print " %s\r" % msg + "",
+def display(people, ticks):
+    msg = "Alive: %s | Dead: %s | Homeless: %s | ticks %s\r"
+    msg = msg % (alive(people), dead(people), len(homeless), ticks)
+    sys.stdout.write(msg)
     sys.stdout.flush()
+
+class GayOnExit(object):
+    """Gay context manager"""
+
+    def __init__(self, people):
+        """Takes list of people"""
+        self.people = people
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if exc_type is KeyboardInterrupt:
+            print("\r", end="")
+            display(people, ticks)
+            print()
+
+            couples = 0
+            for i in self.people:
+                if i.partner is not None and i.gender == i.partner.gender:
+                    couples = couples + 1
+
+            # assume monogamy
+            couples = couples / 2
+            popn = len(self.people)
+
+            ratio = 100 * couples / popn
+            print("Percentage of same gender couples: %f" % ratio)
+            return True
+        return exc_type is None
 
 if __name__ == "__main__":
     if "-v" in sys.argv[1:] or "--version" in sys.argv[1:]:
-        print "The version is: %s" % version
+        print("The version is: %s" % version)
         sys.exit()
 
     if len(sys.argv) <= 1:
-        print "You need to say how many people to start off with"
-        print "Usage:  %s <people>" % sys.argv[0]
+        print("You need to say how many people to start off with")
+        print("Usage:  %s <people>" % sys.argv[0])
         sys.exit()
 
     # inital people gen
     people = [Person() for i in range(int(sys.argv[1]))]
+    homeless.add_occupants(people[:])
     c = 0
     ticks = 0
-    speed = float(60) / settings.speed
-    while True:
-        display("Alive: %s | Dead: %s | ticks %s" % (alive(people), dead(people), ticks))
-        # main game loop
-        try:
-            person = people[c]
-        except IndexError:
+    speed = 60 / settings.speed
+
+    with GayOnExit(people):
+        while True:
+            timer = Timer(speed, lambda *x:x)
+            timer.start()
+
+            display(people, ticks)
+
+            # main game loop
+            while True:
+                try:
+                    person = people[c]
+                except IndexError:
+                    break
+
+                c += 1
+
+                try:
+                    np = person.on_tick(people[c])
+                except IndexError:
+                    np = person.on_tick()
+
+                if np:
+                    homeless.add_occupants([np])
+                    people.append(np)
+
             ticks += 1
-            time.sleep(speed)
             c = 0
-            continue
-
-        c += 1
-        try:
-            np = person.on_tick(people[c])
-        except IndexError:
-            np = person.on_tick()
-        
-        if np:
-            people.append(np)
-
+            timer.join()
