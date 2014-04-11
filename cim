@@ -57,7 +57,7 @@ class GayOnExit(object):
 
             couples = 0
             for i in self.people:
-                if i.partner is not None and i.gender == i.partner.gender:
+                if i.partner is not None and i.sex == i.partner.sex:
                     couples = couples + 1
 
             # assume monogamy
