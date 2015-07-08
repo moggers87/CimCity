@@ -57,19 +57,19 @@ class GayOnExit(object):
     def __exit__(self, exc_type, exc_value, traceback):
         if exc_type is KeyboardInterrupt:
             print("\r", end="")
-            display(people, ticks)
+            display(self.people, ticks)
             print()
 
-            couples = 0
+            gay_couples = 0
             for i in self.people:
                 if i.partner is not None and i.sex == i.partner.sex:
-                    couples = couples + 1
+                    gay_couples = gay_couples + 1
 
             # assume monogamy
-            couples = couples / 2
+            gay_couples = gay_couples / 2
             popn = len(self.people)
 
-            ratio = 100 * couples / popn
+            ratio = 100 * gay_couples / popn
             print("Percentage of same gender couples: %f" % ratio)
             return True
         return exc_type is None
