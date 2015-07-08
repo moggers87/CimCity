@@ -27,11 +27,8 @@ class LivingSpace(object):
     """Maybe house"""
     healthiness = 0
 
-    def __init__(self, occupants=None):
+    def __init__(self):
         self.occupants = set()
-        self.add_occupants(occupants or [])
-
-        self.recalculate_health()
 
     def __len__(self):
         return len(self.occupants)
@@ -78,9 +75,9 @@ class House(LivingSpace):
     capacity = 4
     base_healthiness = 0
 
-    def __init__(self, occupants=None, civics=None):
+    def __init__(self, civics=None):
         self.civics = set(civics or [])
-        super(House, self).__init__(occupants)
+        super(House, self).__init__()
 
     def recalculate_health(self, person=None):
         healthiness = self.base_healthiness

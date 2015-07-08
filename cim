@@ -106,7 +106,15 @@ if __name__ == "__main__":
 
     # inital people gen
     people = [Person() for i in range(int(sys.argv[1]))]
-    homeless.add_occupants(people[:])
+    houses = [House() for i in range(4)]
+
+    left_over = people[:]
+    for house in houses:
+        if not house.add_occupants(left_over):
+            break
+
+    homeless.add_occupants(left_over)
+
     c = 0
     ticks = 0
     speed = 60 / settings.speed
@@ -133,8 +141,12 @@ if __name__ == "__main__":
                     np = person.on_tick()
 
                 if np:
-                    homeless.add_occupants([np])
                     people.append(np)
+                    np = [np]
+                    for house in houses:
+                        if not house.add_occupants(np):
+                            break
+                    homeless.add_occupants(np)
 
             ticks += 1
             c = 0
