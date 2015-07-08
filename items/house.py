@@ -19,7 +19,9 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import settings
 
+
 __all__ = ['homeless', 'House']
+
 
 class LivingSpace(object):
     """Maybe house"""
@@ -56,12 +58,14 @@ class LivingSpace(object):
         for occupant in self.occupants:
             occupant.healthiness = healthiness
 
+
 class Homeless(LivingSpace):
     """Not a house"""
     capacity = None
     healthiness = min(0, settings.homeless_healthiness)
     
 homeless = Homeless()
+
 
 class House(LivingSpace):
     """Basic house"""

@@ -30,14 +30,17 @@ version = "0.0.1"
 def alive(people):
     return len([p for p in people if not p.dead])
 
+
 def dead(people):
     return len([p for p in people if p.dead])
+
 
 def display(people, ticks):
     msg = "Alive: %s | Dead: %s | Homeless: %s | ticks %s\r"
     msg = msg % (alive(people), dead(people), len(homeless), ticks)
     sys.stdout.write(msg)
     sys.stdout.flush()
+
 
 class GayOnExit(object):
     """Gay context manager"""
@@ -68,6 +71,7 @@ class GayOnExit(object):
             print("Percentage of same gender couples: %f" % ratio)
             return True
         return exc_type is None
+
 
 if __name__ == "__main__":
     if "-v" in sys.argv[1:] or "--version" in sys.argv[1:]:

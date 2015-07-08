@@ -17,10 +17,12 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import math
-import settings
 import random
 
 #from exceptions.generic import CityCimException
+import settings
+
+
 class Person(object):
 
     # features
