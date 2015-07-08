@@ -18,12 +18,14 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 from threading import Timer
-import settings
+import atexit
 import sys
+import termios
 import time
 
 from items.house import *
 from items.person import Person
+import settings
 
 version = "0.0.1"
 
@@ -73,6 +75,22 @@ class GayOnExit(object):
         return exc_type is None
 
 
+def disable_echo():
+    fd = sys.stdin.fileno()
+    attrs = termios.tcgetattr(fd)
+    attrs[3] = attrs[3] & ~termios.ECHO
+
+    termios.tcsetattr(fd, termios.TCSADRAIN, attrs)
+
+
+def enable_echo():
+    fd = sys.stdin.fileno()
+    attrs = termios.tcgetattr(fd)
+    attrs[3] = attrs[3] | termios.ECHO
+
+    termios.tcsetattr(fd, termios.TCSADRAIN, attrs)
+
+
 if __name__ == "__main__":
     if "-v" in sys.argv[1:] or "--version" in sys.argv[1:]:
         print("The version is: %s" % version)
@@ -82,6 +100,9 @@ if __name__ == "__main__":
         print("You need to say how many people to start off with")
         print("Usage:  %s <people>" % sys.argv[0])
         sys.exit()
+
+    disable_echo()
+    atexit.register(enable_echo)
 
     # inital people gen
     people = [Person() for i in range(int(sys.argv[1]))]
