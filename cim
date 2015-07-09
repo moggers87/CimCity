@@ -18,26 +18,29 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 from threading import Timer
-import settings
 import sys
 import time
 
 from items.house import *
 from items.person import Person
+import settings
 
 version = "0.0.1"
 
 def alive(people):
     return len([p for p in people if not p.dead])
 
+
 def dead(people):
     return len([p for p in people if p.dead])
+
 
 def display(people, ticks):
     msg = "Alive: %s | Dead: %s | Homeless: %s | ticks %s\r"
     msg = msg % (alive(people), dead(people), len(homeless), ticks)
     sys.stdout.write(msg)
     sys.stdout.flush()
+
 
 class GayOnExit(object):
     """Gay context manager"""
@@ -52,22 +55,23 @@ class GayOnExit(object):
     def __exit__(self, exc_type, exc_value, traceback):
         if exc_type is KeyboardInterrupt:
             print("\r", end="")
-            display(people, ticks)
+            display(self.people, ticks)
             print()
 
-            couples = 0
+            gay_couples = 0
             for i in self.people:
                 if i.partner is not None and i.sex == i.partner.sex:
-                    couples = couples + 1
+                    gay_couples = gay_couples + 1
 
             # assume monogamy
-            couples = couples / 2
+            gay_couples = gay_couples / 2
             popn = len(self.people)
 
-            ratio = 100 * couples / popn
+            ratio = 100 * gay_couples / popn
             print("Percentage of same gender couples: %f" % ratio)
             return True
         return exc_type is None
+
 
 if __name__ == "__main__":
     if "-v" in sys.argv[1:] or "--version" in sys.argv[1:]:
@@ -81,7 +85,15 @@ if __name__ == "__main__":
 
     # inital people gen
     people = [Person() for i in range(int(sys.argv[1]))]
-    homeless.add_occupants(people[:])
+    houses = [House() for i in range(4)]
+
+    left_over = people[:]
+    for house in houses:
+        if not house.add_occupants(left_over):
+            break
+
+    homeless.add_occupants(left_over)
+
     c = 0
     ticks = 0
     speed = 60 / settings.speed
@@ -108,8 +120,12 @@ if __name__ == "__main__":
                     np = person.on_tick()
 
                 if np:
-                    homeless.add_occupants([np])
                     people.append(np)
+                    np = [np]
+                    for house in houses:
+                        if not house.add_occupants(np):
+                            break
+                    homeless.add_occupants(np)
 
             ticks += 1
             c = 0
