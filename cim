@@ -47,7 +47,11 @@ def display(people, ticks):
 
 
 class GayOnExit(object):
-    """Gay context manager"""
+    """Gay context manager
+
+    Counts out how many couples with same-sex and finds all the miricle
+    children.
+    """
 
     def __init__(self, people):
         """Takes list of people"""
@@ -62,10 +66,13 @@ class GayOnExit(object):
             display(self.people, ticks)
             print()
 
+            miricle_childs = 0
             gay_couples = 0
             for i in self.people:
-                if i.partner is not None and i.sex == i.partner.sex:
-                    gay_couples = gay_couples + 1
+                if i.gay:
+                    gay_couples += 1
+                if i.miricle_child:
+                    miricle_childs += 1
 
             # assume monogamy
             gay_couples = gay_couples / 2
@@ -73,6 +80,9 @@ class GayOnExit(object):
 
             ratio = 100 * gay_couples / popn
             print("Percentage of same-sex couples: %f" % ratio)
+
+            print("Number of miricle children: %d" % miricle_childs)
+
             return True
         return exc_type is None
 
