@@ -56,14 +56,19 @@ class Person(object):
             return self.death()
 
         if next_person:
-            # oh okay.
             if not self.partner and random.randint(0, 100) >= 75 and self.age >= 12 and self.age <= 60:
                 self.marry(next_person)
                 return None
-            elif self.partner and random.randint(0, 100) >= 95 and self.age >= 15 and self.age <= 50:
-                if self.partner.sex == self.sex and random.randint(0, 10000) >= 9998:
-                    print("\n=> Gay couple produced a child!")
-                    return self.produce_offspring()
+            elif self.partner and random.randint(0, 100) >= 80 and self.age >= 15 and self.age <= 50:
+                if self.partner.sex == self.sex:
+                    # same sex couple, massively reduced chance of producing a child!
+                    if random.randint(0, 10000) >= 9998:
+                        child = self.produce_offspring()
+
+                        if child is not None:
+                            print("\n=> Gay couple produced a child!")
+
+                        return child
                 else:
                     return self.produce_offspring()
 
