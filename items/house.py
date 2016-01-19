@@ -1,4 +1,6 @@
 ##
+# Copyright (C) 2014, 2015 Matt Molyneaux
+#
 # This file is part of CimCity.
 #
 # CimCity is free software: you can redistribute it and/or modify
@@ -66,7 +68,7 @@ class Homeless(LivingSpace):
     """Not a house"""
     capacity = None
     healthiness = settings.homeless_healthiness
-    
+
 homeless = Homeless()
 
 

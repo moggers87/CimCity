@@ -1,5 +1,9 @@
 #!/usr/bin/python
+
 ##
+# Copyright (C) 2013, 2014 Jessica Tallon
+# Copyright (C) 2014, 2015 Matt Molyneaux
+#
 # This file is part of CimCity.
 #
 # CimCity is free software: you can redistribute it and/or modify
@@ -19,13 +23,13 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 from threading import Timer
 import sys
-import time
 
 from items.house import *
 from items.person import Person
 import settings
 
 version = "0.0.1"
+
 
 def alive(people):
     return len([p for p in people if not p.dead])
@@ -100,7 +104,7 @@ if __name__ == "__main__":
 
     with GayOnExit(people):
         while True:
-            timer = Timer(speed, lambda *x:x)
+            timer = Timer(speed, lambda *x: x)
             timer.start()
 
             display(people, ticks)

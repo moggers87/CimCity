@@ -1,4 +1,7 @@
 ##
+# Copyright (C) 2013, 2014 Jessica Tallon
+# Copyright (C) 2014 Matt Molyneaux
+#
 # This file is part of CimCity.
 #
 # CimCity is free software: you can redistribute it and/or modify
@@ -16,10 +19,8 @@
 ##
 
 from __future__ import absolute_import, division, print_function, unicode_literals
-import math
 import random
 
-#from exceptions.generic import CityCimException
 import settings
 
 
