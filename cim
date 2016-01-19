@@ -72,7 +72,7 @@ class GayOnExit(object):
             popn = len(self.people)
 
             ratio = 100 * gay_couples / popn
-            print("Percentage of same gender couples: %f" % ratio)
+            print("Percentage of same-sex couples: %f" % ratio)
             return True
         return exc_type is None
 
