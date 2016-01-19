@@ -49,7 +49,7 @@ def display(people, ticks):
 class GayOnExit(object):
     """Gay context manager
 
-    Counts out how many couples with same-sex and finds all the miricle
+    Counts out how many couples with same-sex and finds all the miracle
     children.
     """
 
@@ -66,13 +66,13 @@ class GayOnExit(object):
             display(self.people, ticks)
             print()
 
-            miricle_childs = 0
+            miracle_childs = 0
             gay_couples = 0
             for i in self.people:
                 if i.gay:
                     gay_couples += 1
-                if i.miricle_child:
-                    miricle_childs += 1
+                if i.miracle_child:
+                    miracle_childs += 1
 
             # assume monogamy
             gay_couples = gay_couples / 2
@@ -81,7 +81,7 @@ class GayOnExit(object):
             ratio = 100 * gay_couples / popn
             print("Percentage of same-sex couples: %f" % ratio)
 
-            print("Number of miricle children: %d" % miricle_childs)
+            print("Number of miracle children: %d" % miracle_childs)
 
             return True
         return exc_type is None

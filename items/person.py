@@ -98,7 +98,7 @@ class Person(object):
         return self.partner is not None and self.sex == self.partner.sex
 
     @property
-    def miricle_child(self):
+    def miracle_child(self):
         """Is this person the product of a same-sex couple?"""
         parents = [p.sex == self.parents[0].sex for p in self.parents]
         return len(self.parents) > 1 and all(parents)
