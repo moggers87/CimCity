@@ -20,7 +20,6 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 from threading import Timer
-import argparse
 import sys
 
 from cim.items.house import *
@@ -30,6 +29,8 @@ from cim import settings
 
 VERSION = "0.0.1"
 
+# globals
+ticks = 0
 
 def alive(people):
     return len([p for p in people if not p.dead])
@@ -88,6 +89,7 @@ class GayOnExit(object):
 
 
 def main(p_len, h_len):
+    global ticks
     # inital people gen
     people = [Person() for i in range(p_len)]
     houses = [House() for i in range(h_len)]
@@ -137,15 +139,3 @@ def main(p_len, h_len):
             ticks += 1
             c = 0
             timer.join()
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="A city simulator")
-    parser.add_argument("--version", action="version", version="%(prog)s {}".format(VERSION))
-    parser.add_argument("people", type=int)
-    parser.add_argument("houses", nargs="?", type=int, default=0)
-
-    args = parser.parse_args()
-    p_len = int(args.people)
-    h_len = int(args.houses)
-
-    main(p_len, h_len)
