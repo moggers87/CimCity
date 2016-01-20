@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 ##
 # Copyright (C) 2013, 2014 Jessica Tallon
 # Copyright (C) 2014, 2015 Matt Molyneaux
@@ -25,9 +23,9 @@ from threading import Timer
 import argparse
 import sys
 
-from items.house import *
-from items.person import Person
-import settings
+from cim.items.house import *
+from cim.items.person import Person
+from cim import settings
 
 
 VERSION = "0.0.1"
@@ -89,16 +87,7 @@ class GayOnExit(object):
         return exc_type is None
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="A city simulator")
-    parser.add_argument("--version", action="version", version="%(prog)s {}".format(VERSION))
-    parser.add_argument("people", type=int)
-    parser.add_argument("houses", nargs="?", type=int, default=0)
-
-    args = parser.parse_args()
-    p_len = int(args.people)
-    h_len = int(args.houses)
-
+def main(p_len, h_len):
     # inital people gen
     people = [Person() for i in range(p_len)]
     houses = [House() for i in range(h_len)]
@@ -148,3 +137,15 @@ if __name__ == "__main__":
             ticks += 1
             c = 0
             timer.join()
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="A city simulator")
+    parser.add_argument("--version", action="version", version="%(prog)s {}".format(VERSION))
+    parser.add_argument("people", type=int)
+    parser.add_argument("houses", nargs="?", type=int, default=0)
+
+    args = parser.parse_args()
+    p_len = int(args.people)
+    h_len = int(args.houses)
+
+    main(p_len, h_len)
