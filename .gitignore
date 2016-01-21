@@ -2,3 +2,5 @@
 *.mo
 *.db
 *.swp
+
+*.egg-info/

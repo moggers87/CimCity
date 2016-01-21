@@ -20,6 +20,7 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 from threading import Timer
+import argparse
 import sys
 
 from cim.items.house import *
@@ -139,3 +140,17 @@ def main(p_len, h_len):
             ticks += 1
             c = 0
             timer.join()
+
+
+def run():
+    # script entry point
+    parser = argparse.ArgumentParser(description="A city simulator")
+    parser.add_argument("--version", action="version", version="%(prog)s {}".format(VERSION))
+    parser.add_argument("people", type=int)
+    parser.add_argument("houses", nargs="?", type=int, default=0)
+
+    args = parser.parse_args()
+    p_len = int(args.people)
+    h_len = int(args.houses)
+
+    main(p_len, h_len)
