@@ -1,5 +1,5 @@
 ##
-# Copyright (C) 2014 Matt Molyneaux
+# Copyright (C) 2014, 2015 Matt Molyneaux
 #
 # This file is part of CimCity.
 #
@@ -18,7 +18,24 @@
 ##
 
 from __future__ import absolute_import, division, print_function, unicode_literals
+import random
 
 
 class CivicBuilding(object):
     healthiness = 10
+
+
+class PoliceStation(CivicBuilding):
+    @property
+    def healthiness(self):
+        return int(random.gauss(super(PoliceStation, self).healthiness, 10))
+
+
+class FireStation(CivicBuilding):
+    pass
+
+
+class Hospital(CivicBuilding):
+    @property
+    def healthiness(self):
+        return int(random.gauss(super(Hospital, self).healthiness, 1))
