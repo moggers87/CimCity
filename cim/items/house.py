@@ -31,6 +31,7 @@ class LivingSpace(object):
 
     def __init__(self):
         self.occupants = set()
+        self.recalculate_health()
 
     def __len__(self):
         return len(self.occupants)
