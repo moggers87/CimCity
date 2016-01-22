@@ -23,4 +23,5 @@ setup(
     entry_points={
         "console_scripts": ["cim = cim:run"],
     },
+    test_suite="cim.tests",
 )
