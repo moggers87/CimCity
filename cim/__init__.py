@@ -63,7 +63,7 @@ class GayOnExit(object):
         pass
 
     def __exit__(self, exc_type, exc_value, traceback):
-        if exc_type is KeyboardInterrupt:
+        if exc_type is KeyboardInterrupt or exc_type is None:
             print("\r", end="")
             display(self.people, ticks)
             print()
@@ -86,7 +86,7 @@ class GayOnExit(object):
             print("Number of miracle children: %d" % miracle_childs)
 
             return True
-        return exc_type is None
+        return False
 
 
 def main(p_len, h_len):
@@ -109,7 +109,7 @@ def main(p_len, h_len):
     speed = 60 / settings.speed
 
     with GayOnExit(people):
-        while True:
+        while alive(people) > 0:
             timer = Timer(speed, lambda *x: x)
             timer.start()
 
