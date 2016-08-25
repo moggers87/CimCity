@@ -22,6 +22,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from threading import Timer
 import argparse
 import sys
+import termios
 
 from cim.items.house import *
 from cim.items.person import Person
@@ -46,6 +47,21 @@ def display(people, ticks):
     msg = msg % (alive(people), dead(people), len(homeless), ticks)
     sys.stdout.write(msg)
     sys.stdout.flush()
+
+
+class DisableEcho(object):
+    """Disables terminal echo"""
+    def __enter__(self):
+        fd = sys.stdin.fileno()
+        attr = termios.tcgetattr(fd)
+        attr[3] = attr[3] & ~termios.ECHO
+        termios.tcsetattr(fd, termios.TCSADRAIN, attr)
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        fd = sys.stdin.fileno()
+        attr = termios.tcgetattr(fd)
+        attr[3] = attr[3] | termios.ECHO
+        termios.tcsetattr(fd, termios.TCSADRAIN, attr)
 
 
 class GayOnExit(object):
@@ -108,7 +124,7 @@ def main(p_len, h_len):
     ticks = 0
     speed = 60 / settings.speed
 
-    with GayOnExit(people):
+    with GayOnExit(people), DisableEcho():
         while alive(people) > 0:
             timer = Timer(speed, lambda *x: x)
             timer.start()
