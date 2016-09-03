@@ -19,14 +19,22 @@
 ##
 
 from __future__ import absolute_import, division, print_function, unicode_literals
-from threading import Timer
+from threading import Timer, Thread
 import argparse
+import os
 import sys
 import termios
+import tty
 
 from cim.items.house import *
 from cim.items.person import Person
 from cim import settings
+
+
+try:
+    import queue
+except ImportError:
+    import Queue as queue
 
 
 VERSION = "0.0.1"
@@ -42,9 +50,9 @@ def dead(people):
     return len([p for p in people if p.dead])
 
 
-def display(people, ticks):
-    msg = "Alive: %s | Dead: %s | Homeless: %s | ticks %s\r"
-    msg = msg % (alive(people), dead(people), len(homeless), ticks)
+def display(people, houses, ticks):
+    msg = "\rAlive: %s | Dead: %s | Homeless: %s | Houses: %s | Ticks %s\r"
+    msg = msg % (alive(people), dead(people), len(homeless), len(houses), ticks)
     sys.stdout.write(msg)
     sys.stdout.flush()
 
@@ -54,14 +62,14 @@ class DisableEcho(object):
     def __enter__(self):
         fd = sys.stdin.fileno()
         attr = termios.tcgetattr(fd)
+        self.old_attrs = attr[:]
         attr[3] = attr[3] & ~termios.ECHO
         termios.tcsetattr(fd, termios.TCSADRAIN, attr)
+        tty.setraw(fd, termios.TCSADRAIN)
 
     def __exit__(self, exc_type, exc_value, traceback):
         fd = sys.stdin.fileno()
-        attr = termios.tcgetattr(fd)
-        attr[3] = attr[3] | termios.ECHO
-        termios.tcsetattr(fd, termios.TCSADRAIN, attr)
+        termios.tcsetattr(fd, termios.TCSADRAIN, self.old_attrs)
 
 
 class GayOnExit(object):
@@ -71,9 +79,10 @@ class GayOnExit(object):
     children.
     """
 
-    def __init__(self, people):
+    def __init__(self, people, houses):
         """Takes list of people"""
         self.people = people
+        self.houses = houses
 
     def __enter__(self):
         pass
@@ -81,7 +90,7 @@ class GayOnExit(object):
     def __exit__(self, exc_type, exc_value, traceback):
         if exc_type is KeyboardInterrupt or exc_type is None:
             print("\r", end="")
-            display(self.people, ticks)
+            display(self.people, self.houses, ticks)
             print()
 
             miracle_childs = 0
@@ -105,6 +114,28 @@ class GayOnExit(object):
         return False
 
 
+def add_house(people, houses):
+    new_house = House()
+    houses.append(new_house)
+
+
+def quit(people, houses):
+    raise KeyboardInterrupt
+
+
+KEYS = {
+    "d": add_house,
+    chr(3): quit,
+    "q": quit,
+}
+
+
+def read_stdin(stdin, fifo):
+    while True:
+        char = stdin.read(1)
+        fifo.put(char)
+
+
 def main(p_len, h_len):
     global ticks
     # inital people gen
@@ -124,12 +155,28 @@ def main(p_len, h_len):
     ticks = 0
     speed = 60 / settings.speed
 
-    with GayOnExit(people), DisableEcho():
+
+    fifo = queue.Queue(100)
+    t = Thread(target=read_stdin, args=[sys.stdin, fifo])
+    t.daemon = True
+    t.start()
+
+    with GayOnExit(people, houses), DisableEcho():
         while alive(people) > 0:
             timer = Timer(speed, lambda *x: x)
             timer.start()
 
-            display(people, ticks)
+            display(people, houses, ticks)
+
+            i = 100
+            while i > 0:
+                try:
+                    key = fifo.get_nowait()
+                    if key in KEYS:
+                        KEYS[key](people, houses)
+                except queue.Empty:
+                    break;
+                i = i - 1
 
             # iterate over people, including those born this generation
             while True:
